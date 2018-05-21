@@ -66,27 +66,27 @@ void imageTransCallback(const sensor_msgs::ImageConstPtr& msg)
     cv::Mat s_img = cv_bridge::toCvShare(msg, "bgr8")->image;
     cv::imshow("show image", s_img);
     //imgsave
-//    char key;
-//    key=cv::waitKey(33);
+    char key;
+    key=cv::waitKey(33);
 
-//    struct tm* fileTime;
-//    char filePath[100];
-//    char fileName[100];
-//    time_t t;
-//    t=time(NULL);
-//    fileTime=localtime(&t);
-//    strftime(filePath,100,"/home/nvidia/Travel_Assistance_Robot/image/img_%Y%m%d_%H%M%S.jpg",fileTime);
-//    strftime(fileName,100,"img_%Y%m%d_%H%M%S.jpg",fileTime);
+    struct tm* fileTime;
+    char filePath[100];
+    char fileName[100];
+    time_t t;
+    t=time(NULL);
+    fileTime=localtime(&t);
+    strftime(filePath,100,"/home/nvidia/Travel_Assistance_Robot/image/img_%Y%m%d_%H%M%S.jpg",fileTime);
+    strftime(fileName,100,"img_%Y%m%d_%H%M%S.jpg",fileTime);
 
-//    // wait for space
-//    if(key==32)
-//      imageSaveFlag = true;
-//    if(imageSaveFlag)
-//    {
-//      cv::imwrite(filePath,cv_bridge::toCvShare(msg, "bgr8")->image);
-//      imageSaveFlag = false;
-//      cout<<fileName<<" had saved  "<<endl;
-//    }
+    // wait for space
+    if(key==32)
+      imageSaveFlag = true;
+    if(imageSaveFlag)
+    {
+      cv::imwrite(filePath,cv_bridge::toCvShare(msg, "bgr8")->image);
+      imageSaveFlag = false;
+      cout<<fileName<<" had saved  "<<endl;
+    }
    //socket image trans
 //    {
 //      /**************
