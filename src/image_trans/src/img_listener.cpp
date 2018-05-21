@@ -35,7 +35,7 @@ using namespace std;
 
 #define SERVER_PORT   7754
 #define BUFFER_SIZE 1024
-#define serverIpAddr "192.168.1.101"
+#define serverIpAddr "192.168.1.103"
 
 unsigned int fileNum = 1;
 bool imageSaveFlag;
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
   cv::namedWindow("show image");
   cv::startWindowThread();
   image_transport::ImageTransport transport(nhImage);
-  image_transport::Subscriber sub = transport.subscribe("/camera/image_raw",1,imageTransCallback);
+  image_transport::Subscriber sub = transport.subscribe("/usb_cam/image_raw",1,imageTransCallback);
 
   //ros::spin() 在调用后不会再返回，也就是主程序到这儿就不往下执行了
   ros::spin();
@@ -62,37 +62,37 @@ void imageTransCallback(const sensor_msgs::ImageConstPtr& msg)
 {
   try
   {
-    //get img & show
-    cv::Mat src_image = cv_bridge::toCvShare(msg, "bgr8")->image;
-    cv::imshow("show image", src_image);
+    //get img & show,transfer ros img to cv img
+    cv::Mat s_img = cv_bridge::toCvShare(msg, "bgr8")->image;
+    cv::imshow("show image", s_img);
     //imgsave
-    char key;
-    key=cv::waitKey(33);
+//    char key;
+//    key=cv::waitKey(33);
 
-    struct tm* fileTime;
-               char filePath[100];
-               char fileName[100];
-               time_t t;
-               t=time(NULL);
-               fileTime=localtime(&t);
-               strftime(filePath,128,"/home/nvidia/Travel_Assistance_Robot/image/img_%Y%m%d_%H%M%S.jpg",fileTime);
-               strftime(fileName,128,"img_%Y%m%d_%H%M%S.jpg",fileTime);
+//    struct tm* fileTime;
+//    char filePath[100];
+//    char fileName[100];
+//    time_t t;
+//    t=time(NULL);
+//    fileTime=localtime(&t);
+//    strftime(filePath,100,"/home/nvidia/Travel_Assistance_Robot/image/img_%Y%m%d_%H%M%S.jpg",fileTime);
+//    strftime(fileName,100,"img_%Y%m%d_%H%M%S.jpg",fileTime);
 
-    // wait for space
-    if(key==32)
-      imageSaveFlag = true;
-    if(imageSaveFlag)
-    {
-      cv::imwrite(filePath,cv_bridge::toCvShare(msg, "bgr8")->image);
-      imageSaveFlag = false;
-      printf(" had saved %s ",fileName);
-    }
-//   //socket image trans
+//    // wait for space
+//    if(key==32)
+//      imageSaveFlag = true;
+//    if(imageSaveFlag)
+//    {
+//      cv::imwrite(filePath,cv_bridge::toCvShare(msg, "bgr8")->image);
+//      imageSaveFlag = false;
+//      cout<<fileName<<" had saved  "<<endl;
+//    }
+   //socket image trans
 //    {
 //      /**************
 //       * socket struct
 //       * ***********/
-//      //设置一个socket地址结构client_addr,代表客户机internet地址, 端口
+      //设置一个socket地址结构client_addr,代表客户机internet地址, 端口
 //      struct sockaddr_in client_addr;
 //      bzero(&client_addr,sizeof(client_addr)); //把一段内存区的内容全部设置为0
 //     // memset(&client_addr,sizeof(client_addr));
@@ -145,11 +145,11 @@ void imageTransCallback(const sensor_msgs::ImageConstPtr& msg)
 //          }
 //      cout<<"success connect To %s!"<<serverIpAddr<<endl;
 
-//      /*********************  data transfer test  ****************************/
-//      /*****
-//       * data prepare,set buffer
-//       * bzero == memset
-//       * ****/
+////      /*********************  data transfer test  ****************************/
+////      /*****
+////       * data prepare,set buffer
+////       * bzero == memset
+////       * ****/
 //      char buffer[BUFFER_SIZE];
 //      bzero(buffer,BUFFER_SIZE);
 //      //从服务器接收数据到buffer中
@@ -186,11 +186,12 @@ void imageTransCallback(const sensor_msgs::ImageConstPtr& msg)
 //      int toSend=encode_img_size, receive  = 0, finished = 0;
 //      const char* file_name;
 //      char char_len[10];
-//      file_name= fn.c_str();
+//      //file_name= fn.c_str();
+//      file_name=fileName;
 //      // file_name,qDebug file_name be empty
 //      //qDebug("file name is %s\n",file_name);
 //      bzero(buffer,BUFFER_SIZE);
-//      send_flag=send(client_socket, file_name, 10, 0);
+//      send_flag=send(client_socket, file_name, 100, 0);
 //      if(!send_flag)
 //        {
 //          cout<<" send file_name failed\n "<<endl;

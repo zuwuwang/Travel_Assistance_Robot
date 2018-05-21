@@ -41,7 +41,7 @@ static int image_num = 1;
 
 #define PORT 30000
 #define BUFFER_SIZE 20000
-const char * servInetAddr = "10.95.6.210"; //service addr
+const char * servInetAddr = "192.168.1.103"; //service addr
 static int sockfd;
 
 //static ros::Publisher capture;
