@@ -40,6 +40,7 @@ using namespace std;
 unsigned int fileNum = 1;
 bool imageSaveFlag;
 void imageTransCallback(const sensor_msgs::ImageConstPtr& msg);
+void captureTimerCallback(const ros::TimerEvent& e);
 
 // main function
 int main(int argc, char **argv)
@@ -49,13 +50,20 @@ int main(int argc, char **argv)
   cv::namedWindow("show image");
   cv::startWindowThread();
   image_transport::ImageTransport transport(nhImage);
-  image_transport::Subscriber sub = transport.subscribe("/usb_cam/image_raw",1,imageTransCallback);
+  //ros timer
+  ros::Timer captureTimer=nhImage.createTimer(ros::Duration(1),captureTimerCallback);
+ // image_transport::Subscriber sub = transport.subscribe("/usb_cam/image_raw",1,imageTransCallback);
 
   //ros::spin() 在调用后不会再返回，也就是主程序到这儿就不往下执行了
   ros::spin();
   cv::destroyWindow("view");
 
   return 0;
+}
+
+void captureTimerCallback(const ros::TimerEvent& e)
+{
+  ROS_INFO("captureTimerCallback  triggered");
 }
 
 void imageTransCallback(const sensor_msgs::ImageConstPtr& msg)
