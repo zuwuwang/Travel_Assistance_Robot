@@ -75,8 +75,8 @@ void imageTransCallback(const sensor_msgs::ImageConstPtr& msg)
     time_t t;
     t=time(NULL);
     fileTime=localtime(&t);
-    strftime(filePath,100,"/home/nvidia/Travel_Assistance_Robot/image/img_%Y%m%d_%H%M%S.jpg",fileTime);
-    strftime(fileName,100,"img_%Y%m%d_%H%M%S.jpg",fileTime);
+    strftime(filePath,100,"/home/nvidia/Travel_Assistance_Robot/image/%Y%m%d_%H%M%S.jpg",fileTime);
+    strftime(fileName,100,"%Y%m%d_%H%M%S.jpg",fileTime);
 
     // wait for space
     if(key==32)
