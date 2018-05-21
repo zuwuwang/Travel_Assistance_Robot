@@ -41,7 +41,6 @@ unsigned int fileNum = 1;
 bool getImgFlag = true;
 void imageTransCallback(const sensor_msgs::ImageConstPtr& msg);
 void captureTimerCallback(const ros::TimerEvent& e);
-void socketInit();
 
 
 int main(int argc, char **argv)
@@ -50,8 +49,6 @@ int main(int argc, char **argv)
   ros::NodeHandle nhImage;
   cv::namedWindow("show source image");
   cv::startWindowThread();
-  //socket
-  socketInit();
   //ros timer
   ros::Timer captureTimer=nhImage.createTimer(ros::Duration(2),captureTimerCallback);
   image_transport::ImageTransport transport(nhImage);
@@ -64,65 +61,7 @@ int main(int argc, char **argv)
 
   return 0;
 }
-void socketInit()
-{
-  //socket image trans
-     /**************
-      * socket struct
-      * ***********/
-     //设置一个socket地址结构client_addr,代表客户机internet地址, 端口
-     struct sockaddr_in client_addr;
-     bzero(&client_addr,sizeof(client_addr)); //把一段内存区的内容全部设置为0
-    // memset(&client_addr,sizeof(client_addr));
-     client_addr.sin_family = AF_INET;    //internet协议族
-     client_addr.sin_addr.s_addr = htons(INADDR_ANY);//INADDR_ANY表示自动获取本机地址
-     client_addr.sin_port = htons(0);    //0表示让系统自动分配一个空闲端口
 
-     /*****
-      * socket descriptor
-      * 创建用于internet的流协议(TCP)socket,用client_socket代表客户机socket
-      * ****/
-     int client_socket = socket(AF_INET,SOCK_STREAM,0);
-     if( client_socket < 0)
-         {
-             cout<<"Create Socket Failed!"<<endl;
-             exit(1);
-         }
-
-     /******
-      * bind port
-      * 把客户机的socket和客户机的socket地址结构联系起来,zhiding client_socket ip,point to addr
-      * *******/
-     if( bind(client_socket,(struct sockaddr*)&client_addr,sizeof(client_addr)))
-         {
-             cout<<"Client Bind Port Failed!"<<endl;
-             exit(1);
-         }
-
-     /*****
-      * get server addr from argv[1],
-      * set server params
-      * 设置一个socket地址结构server_addr,代表服务器的internet地址, 端口
-      * server_addr.sin_addr.s_addr=inet_addr(argv[1]);//same as up inet_aton
-      * ****/
-     //
-     struct sockaddr_in server_addr;
-     bzero(&server_addr,sizeof(server_addr));
-     server_addr.sin_family = AF_INET;
-     server_addr.sin_addr.s_addr = inet_addr(serverIpAddr);
-     server_addr.sin_port = htons(SERVER_PORT);
-     socklen_t server_addr_length = sizeof(server_addr);
-     /***
-      * connect request,to server ip.success return 0;fail is 1
-      * 向服务器发起连接,连接成功后client_socket代表了客户机和服务器的一个socket连接
-      * **/
-      if(connect(client_socket,(struct sockaddr*)&server_addr, server_addr_length) < 0)
-         {
-             cout<<"Can Not Connect To "<<serverIpAddr<<endl;
-             exit(1);
-         }
-     cout<<"Success Connect To Server,Server Addr is "<<serverIpAddr<<"!"<<endl;
-}
 void captureTimerCallback(const ros::TimerEvent& e)
 {
   getImgFlag=true;
@@ -156,30 +95,85 @@ void imageTransCallback(const sensor_msgs::ImageConstPtr& msg)
       getImgFlag=false;
       ROS_INFO("F");
 
+//      //socket image trans
+//         /**************
+//          * socket struct
+//          * ***********/
+//         //设置一个socket地址结构client_addr,代表客户机internet地址, 端口
+//         struct sockaddr_in client_addr;
+//         bzero(&client_addr,sizeof(client_addr)); //把一段内存区的内容全部设置为0
+//        // memset(&client_addr,sizeof(client_addr));
+//         client_addr.sin_family = AF_INET;    //internet协议族
+//         client_addr.sin_addr.s_addr = htons(INADDR_ANY);//INADDR_ANY表示自动获取本机地址
+//         client_addr.sin_port = htons(0);    //0表示让系统自动分配一个空闲端口
 
-        /*********************  data transfer test  ****************************/
-        /*****
-         * data prepare,set buffer
-         * bzero == memset
-         * ****/
-        char buffer[BUFFER_SIZE];
-        bzero(buffer,BUFFER_SIZE);
-        //从服务器接收数据到buffer中
-        int length = recv(client_socket,buffer,BUFFER_SIZE,0);
-        if(length < 0)
-            {
-                cout<<"Recieve Data From Server %s Failed!"<<serverIpAddr<<endl;
-                exit(1);
-            }
-        cout<<"buffer size is "<<buffer<<endl;
-        bzero(buffer,BUFFER_SIZE);
-        // 向服务器发buffer中的数据
-        bzero(buffer,BUFFER_SIZE);
-        strcpy(buffer,"Hello, World! From Client\n");
-        int send_flag=send(client_socket,buffer,BUFFER_SIZE,0);
-        if(!send_flag)
-            cout<<"send error"<<endl;
-        cout<<"send success"<<endl;
+//         /*****
+//          * socket descriptor
+//          * 创建用于internet的流协议(TCP)socket,用client_socket代表客户机socket
+//          * ****/
+//         int client_socket = socket(AF_INET,SOCK_STREAM,0);
+//         if( client_socket < 0)
+//             {
+//                 cout<<"Create Socket Failed!"<<endl;
+//                 exit(1);
+//             }
+
+//         /******
+//          * bind port
+//          * 把客户机的socket和客户机的socket地址结构联系起来,zhiding client_socket ip,point to addr
+//          * *******/
+//         if( bind(client_socket,(struct sockaddr*)&client_addr,sizeof(client_addr)))
+//             {
+//                 cout<<"Client Bind Port Failed!"<<endl;
+//                 exit(1);
+//             }
+
+//         /*****
+//          * get server addr from argv[1],
+//          * set server params
+//          * 设置一个socket地址结构server_addr,代表服务器的internet地址, 端口
+//          * server_addr.sin_addr.s_addr=inet_addr(argv[1]);//same as up inet_aton
+//          * ****/
+//         //
+//         struct sockaddr_in server_addr;
+//         bzero(&server_addr,sizeof(server_addr));
+//         server_addr.sin_family = AF_INET;
+//         server_addr.sin_addr.s_addr = inet_addr(serverIpAddr);
+//         server_addr.sin_port = htons(SERVER_PORT);
+//         socklen_t server_addr_length = sizeof(server_addr);
+//         /***
+//          * connect request,to server ip.success return 0;fail is 1
+//          * 向服务器发起连接,连接成功后client_socket代表了客户机和服务器的一个socket连接
+//          * **/
+//          if(connect(client_socket,(struct sockaddr*)&server_addr, server_addr_length) < 0)
+//             {
+//                 cout<<" Can Not Connect To "<<serverIpAddr<<endl;
+//                 exit(1);
+//             }
+//         cout<<" Success Connect To Server, Server Addr is "<<serverIpAddr<<"!"<<endl;
+//        /*********************  data transfer test  ****************************/
+//        /*****
+//         * data prepare,set buffer
+//         * bzero == memset
+//         * ****/
+//        char buffer[BUFFER_SIZE];
+//        bzero(buffer,BUFFER_SIZE);
+//        //从服务器接收数据到buffer中
+//        int length = recv(client_socket,buffer,BUFFER_SIZE,0);
+//        if(length < 0)
+//            {
+//                cout<<"Recieve Data From Server "<<serverIpAddr<<"Failed!"<<endl;
+//                exit(1);
+//            }
+//        cout<<"buffer size is "<<buffer<<endl;
+//        bzero(buffer,BUFFER_SIZE);
+//        // 向服务器发buffer中的数据
+//        bzero(buffer,BUFFER_SIZE);
+//        strcpy(buffer,"Hello, World! From Client\n");
+//        int send_flag=send(client_socket,buffer,BUFFER_SIZE,0);
+//        if(!send_flag)
+//            cout<<"send error"<<endl;
+//        cout<<"send success"<<endl;
 
   //      /********************* 向服务器发送image  ****************************/
   //      //1.load image,get imagesize
