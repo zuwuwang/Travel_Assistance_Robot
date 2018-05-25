@@ -1,4 +1,7 @@
 #include <ros/ros.h>
+#include "std_msgs/String.h"
+#include <sstream>
+
 #include <stdio.h>
 #include <errno.h>
 #include <sys/stat.h>
@@ -9,8 +12,11 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include "../include/gps.h"
+#include <iostream>
 
 #define GPS_LEN 1024
+
+using namespace std;
 
 int set_serial(int fd,int nSpeed, int nBits, char nEvent, int nStop);
 int gps_analyse(char *buff,GPRMC *gps_data);
@@ -20,16 +26,20 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "getGpsData");
   ros::NodeHandle nh;
+  ros::Publisher pubGpsData = nh.advertise<std_msgs::String>("gpsInfo",1000);
+  ros::Rate loop_rate(10);
 
   ROS_INFO("start get gps data!");
 
-  int fd=0;
+     int fd=0;
      int n=0;
+     int i;
      GPRMC gprmc;
      char buff[GPS_LEN];
      char *dev_name="/dev/ttyUSB0";
 
-     if((fd=open(dev_name,O_RDWR|O_NOCTTY|O_NDELAY))<0)
+     //if((fd=open(dev_name,O_RDWR|O_NOCTTY|O_NDELAY))<0)
+     if((fd=open(dev_name,O_RDWR))<0)
      {
              perror("Can't Open the ttyUSB0 Serial Port");
              return -1;
@@ -46,11 +56,25 @@ int main(int argc, char **argv)
          }
          printf("buff:%s\n",buff);
          memset(&gprmc, 0 , sizeof(gprmc));
-         gps_analyse(buff,&gprmc);
-         print_gps(&gprmc);
+        // gps_analyse(buff,&gprmc);
+        // print_gps(&gprmc);
+
+         while(ros::ok())
+         {
+            std_msgs::String msg;
+            std::stringstream ss;
+            ss<<gprmc.latitude<<"$$"<<gprmc.longitude;
+            msg.data = ss.str();
+            ROS_INFO("gps data is %s",msg.data.c_str());
+            pubGpsData.publish(msg);
+            ros::spinOnce();
+            loop_rate.sleep();
+         }
 
      }
+
      close(fd);
+
      return 0;
 
      ROS_INFO("get gps data over");
@@ -175,9 +199,9 @@ int print_gps (GPRMC *gps_data)
     printf("                                                           \n");
     printf("===========================================================\n");
     printf("==                   全球GPS定位导航模块                 ==\n");
-    printf("==              Author：zoulei                           ==\n");
-    printf("==              Email：zoulei121@gmail.com               ==\n");
-    printf("==              Platform：fl2440                         ==\n");
+    printf("==              Author：555555                           ==\n");
+    printf("==              Email：wangzuwu@shu.edu.cn               ==\n");
+    printf("==              Platform：NMEA-0183                        ==\n");
     printf("===========================================================\n");
     printf("                                                           \n");
     printf("===========================================================\n");
