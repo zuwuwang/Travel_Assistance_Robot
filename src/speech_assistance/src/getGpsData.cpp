@@ -54,22 +54,22 @@ int main(int argc, char **argv)
             perror("read error");
             return -1;
          }
-         printf("buff:%s\n",buff);
+        // printf("buff:%s\n",buff);
          memset(&gprmc, 0 , sizeof(gprmc));
         // gps_analyse(buff,&gprmc);
-        // print_gps(&gprmc);
+         print_gps(&gprmc);
 
-         while(ros::ok())
-         {
+        // while(ros::ok())
+        // {
             std_msgs::String msg;
             std::stringstream ss;
-            ss<<gprmc.latitude<<"$$"<<gprmc.longitude;
+            ss<<gprmc.latitude<<"$"<<gprmc.longitude;
             msg.data = ss.str();
             ROS_INFO("gps data is %s",msg.data.c_str());
             pubGpsData.publish(msg);
             ros::spinOnce();
             loop_rate.sleep();
-         }
+       //  }
 
      }
 
@@ -197,10 +197,6 @@ int print_gps (GPRMC *gps_data)
 {
     printf("                                                           \n");
     printf("                                                           \n");
-    printf("===========================================================\n");
-    printf("==                   全球GPS定位导航模块                 ==\n");
-    printf("==              Author：555555                           ==\n");
-    printf("==              Email：wangzuwu@shu.edu.cn               ==\n");
     printf("==              Platform：NMEA-0183                        ==\n");
     printf("===========================================================\n");
     printf("                                                           \n");

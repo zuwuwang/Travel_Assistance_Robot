@@ -150,8 +150,8 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
     image_transport::ImageTransport it(nh);
 
-    image_transport::Subscriber sub = it.subscribe("camera/rgb/image_raw", 1, imageCallback);
-    ros::Subscriber camInfo         = nh.subscribe("camera/rgb/camera_info", 1, camInfoCallback);
+    image_transport::Subscriber sub = it.subscribe("camera/image_raw", 1, imageCallback);
+    ros::Subscriber camInfo         = nh.subscribe("camera/camera_info", 1, camInfoCallback);
 
     ros::Rate loop_rate(10);
 
