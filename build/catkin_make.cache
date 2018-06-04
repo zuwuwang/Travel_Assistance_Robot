@@ -1,0 +1,2 @@
+abnormal_detection:image_trans:path_learning:slam:speech_assistance:system_init:task_init
+-DCATKIN_DEVEL_PREFIX=/home/nvidia/Travel_Assistance_Robot/devel -DCMAKE_INSTALL_PREFIX=/home/nvidia/Travel_Assistance_Robot/install -G Unix Makefiles

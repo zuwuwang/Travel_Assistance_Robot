@@ -1,0 +1,8 @@
+prefix=/home/nvidia/Travel_Assistance_Robot/install
+
+Name: system_init
+Description: Description of system_init
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/nvidia/Travel_Assistance_Robot/install/lib 
+Requires: 

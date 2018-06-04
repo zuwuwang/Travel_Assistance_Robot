@@ -1,0 +1,8 @@
+prefix=/home/nvidia/Travel_Assistance_Robot/devel
+
+Name: task_init
+Description: Description of task_init
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/nvidia/Travel_Assistance_Robot/devel/lib 
+Requires: 

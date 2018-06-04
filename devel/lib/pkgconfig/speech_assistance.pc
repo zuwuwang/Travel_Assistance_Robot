@@ -1,0 +1,8 @@
+prefix=/home/nvidia/Travel_Assistance_Robot/devel
+
+Name: speech_assistance
+Description: Description of speech_assistance
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/nvidia/Travel_Assistance_Robot/devel/lib 
+Requires: 
